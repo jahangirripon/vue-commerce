@@ -9,5 +9,5 @@ import firebase from 'firebase';
     storageBucket: "vue-commerce-700d8.appspot.com",
     messagingSenderId: "921069063606"
   };
-  firebase.initializeApp(config);
+ export const fb = firebase.initializeApp(config);
   

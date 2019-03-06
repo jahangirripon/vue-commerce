@@ -34,17 +34,24 @@
                             </div>
 
                         </div>
-                        <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="pills-register-tab">
+                        <div class="tab-pane fade" id="pills-register" role="tabpanel">
 
                              <h5 class="text-center">Create New Account</h5>
+                             <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="name" v-model="name" class="form-control" id="name"  placeholder="Enter name">
+                            </div>
                             <div class="form-group">
                                 <label for="email">Email address</label>
-                                <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
-                                <small class="form-text text-muted">We'll never share your email with anyone else.</small>
+                                <input type="email" v-model="email" class="form-control" id="email" placeholder="Enter email">
                             </div>
                             <div class="form-group">
                                 <label for="password">Password</label>
-                                <input type="password" class="form-control" id="password" placeholder="Password">
+                                <input type="password" v-model="password" class="form-control" id="password" placeholder="Password">
+                            </div>
+
+                            <div class="form-group">
+                                <button class="btn btn-success" type="submit" @click="register">Register</button>
                             </div>
 
                         </div>
@@ -62,12 +69,43 @@
 
 <script>
 
-import firebase from '../firebase';
+import {fb} from '../firebase';
 
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data() {
+      return {
+          name: null,
+          email: null, 
+          password: null
+      }
+  },
+  methods: {
+      register() 
+      {
+        fb.auth().createUserWithEmailAndPassword(this.email, this.password)
+        .then(() => {
+            $('#login').modal('hide');
+            this.$router.replace('admin');
+        })
+        .catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // [START_EXCLUDE]
+        if (errorCode == 'auth/weak-password') {
+          alert('The password is too weak.');
+        } else {
+          alert(errorMessage);
+        }
+        console.log(error);
+        // [END_EXCLUDE]
+        });
+          
+      }
   }
 }
 </script>
