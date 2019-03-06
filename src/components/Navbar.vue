@@ -26,9 +26,16 @@
               <a class="dropdown-item" href="#">Something else here</a>
               </div>
           </li>
+
+          <li class="nav-item pull-right">
+            <button class="btn btn-sm btn-success pull-right" data-toggle="modal" data-target="#login">Login</button>
+          </li>
         </ul>
 
     </div>
+
+      
+
     </nav>
 </template>
 
@@ -37,7 +44,8 @@ export default {
   name: 'NavBar',
   props: {
     msg: String
-  }
+  },
+  components: {}
 }
 </script>
 

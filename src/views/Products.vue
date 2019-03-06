@@ -1,10 +1,16 @@
 <template>
   <div class="overview">
       <div class="container">
-          <div class="row">
-              <div class="col-12">
-                  <p>products</p>
+          <div class="intro h-100">
+            <div class="row h-100">
+              <div class="col-md-6 justify-content-center align-items-center">
+                <h3>Products Page</h3>
+                <p>This is a responsive sidebar template with dropdown menu based on bootstrap 4 framework.</p>
               </div>
+              <div class="col-md-6">
+                <img src="../assets/images/undraw_responsive.svg" class="image-fluid">
+              </div>
+            </div>
           </div>
       </div>
   </div>
