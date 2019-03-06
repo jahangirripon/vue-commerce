@@ -69,6 +69,18 @@
                                 </ul>
                             </div>
                         </li>
+                        <li>
+                            <router-link to="/admin/overview">
+                                <i class="fa fa-chart-line"></i>
+                                <span>Overview</span>
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link to="/admin/products">
+                                <i class="fa fa-chart-line"></i>
+                                <span>Products</span>
+                            </router-link>
+                        </li>
                         <li class="sidebar-dropdown">
                             <a href="#">
                                 <i class="fa fa-shopping-cart"></i>
@@ -265,39 +277,7 @@
         </nav>
         <!-- page-content  -->
         <main class="page-content pt-2">
-            <div id="overlay" class="overlay"></div>
-            <div class="container-fluid p-5">
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <h2>Sidebar template</h2>
-                        <p>This is a responsive sidebar template with dropdown menu based on bootstrap 4 framework.</p>
-
-                    </div>
-                    <div class="form-group col-md-12">
-                        <a id="toggle-sidebar" class="btn btn-dark" href="#">
-                            <span>Toggle Sidebar</span>
-                        </a>
-                        <a id="pin-sidebar" class="btn btn-dark" href="#">
-                            <span>Pin Sidebar</span>
-                        </a>
-
-                    </div>
-                </div>
-                <hr>
-
-
-                <hr>
-                <div class="row">
-                    <div class="form-group col-md-12">
-                        <a href="https://github.com/azouaoui-med/pro-sidebar-template" class="btn btn-dark" target="_blank">
-                            <i class="fab fa-github"></i> View source</a>
-                        <a href="https://github.com/azouaoui-med/pro-sidebar-template/archive/gh-pages.zip" class="btn btn-outline-dark"
-                            target="_blank">
-                            <i class="fa fa-download"></i> Download</a>
-                    </div>
-                </div>
-                <hr>
-            </div>
+            <router-view/>
         </main>
         <!-- page-content" -->
     </div>
