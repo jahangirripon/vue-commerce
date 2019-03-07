@@ -1,11 +1,10 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import {fb} from './firebase'
 
 import jQuery from 'jquery';
 window.$ = window.jQuery = jQuery;
-
-
 
 import 'popper.js';
 import 'bootstrap';
@@ -18,7 +17,16 @@ Vue.component('Jumbotron', require('./components/Jumbotron.vue').default);
 
 Vue.config.productionTip = false
 
-new Vue({
-  router,
-  render: h => h(App)
-}).$mount('#app')
+let app = '';
+
+fb.auth().onAuthStateChanged(function(user) {
+  if(!app) 
+  {
+    new Vue({
+      router,
+      render: h => h(App)
+    }).$mount('#app')
+  }
+})
+
+
