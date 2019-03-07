@@ -19,12 +19,12 @@
 
                   <tbody>
                     <tr v-for="product in products">
-                      <td>{{ product.name }}</td>
-                      <td>{{ product.price }}</td>
+                      <td>{{ product.data().name }}</td>
+                      <td>{{ product.data().price }}</td>
                       <td>
-                        <button class="btn btn-xs btn-success">Edit</button>
+                        <button class="btn btn-xs btn-success" @click="editProduct(product)">Edit</button>
                         &nbsp;&nbsp;&nbsp;
-                        <button class="btn btn-xs btn-danger">Delete</button>
+                        <button class="btn btn-xs btn-danger" @click="deleteProduct(product.id)">Delete</button>
                       </td>
                     </tr>
                   </tbody>
@@ -51,6 +51,38 @@
             </div>
           </div>
       </div>
+
+      <!-- Update Modal -->
+            <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Update Product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    
+                      <div class="form-group">
+                    <label for="">Product name</label>
+                    <input type="name" v-model="product.name" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter name">
+                      </div>
+                      <div class="form-group">
+                          <label for="">Product price</label>
+                          <input type="price" @keyup.enter="saveData" v-model="product.price" class="form-control" id="" placeholder="Enter price">
+                      </div>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" @click="updateProduct()" class="btn btn-primary">Save changes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
   </div>
 </template>
 
@@ -71,10 +103,51 @@ export default {
       {
         name: null,
         price: null
-      }
+      },
+      activeItem: null
     }
   },
   methods: {
+
+    editProduct(product)
+    {
+      $('#updateModal').modal('show');
+      this.product = product.data();
+      this.activeItem = product.id;
+    },
+
+    updateProduct()
+    {
+      db.collection('products').doc(this.activeItem).update(this.product)
+        .then(() => {
+          $('#updateModal').modal('hide');
+          this.readData();
+          console.log("Data updated successfully!");         
+        })
+        .catch((error) => {
+          console.error("Error updating document:", error);
+          
+        });
+    },
+
+    deleteProduct(doc)
+    {
+      if(confirm('Are you sure?')) {
+        db.collection('products').doc(doc).delete()
+        .then(() => {
+          console.log("Data deleted successfully!");   
+          this.readData();      
+        })
+        .catch((error) => {
+          console.error("Error removing document:", error);
+          
+        });
+      }
+      else
+      {
+
+      }
+    },
     readData()
     {
       this.reset();
@@ -82,7 +155,8 @@ export default {
       .then((querySnapshot) =>  {
         querySnapshot.forEach((doc) => {
           //console.log(doc.id, " => ", doc.data());
-          this.products.push(doc.data());
+          //this.products.push(doc.data());
+          this.products.push(doc);
         });
       });
     },
