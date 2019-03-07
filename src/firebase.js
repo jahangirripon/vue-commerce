@@ -1,4 +1,5 @@
 import firebase from 'firebase';
+require  ("firebase/firestore");
   
   // Initialize Firebase
   var config = {
@@ -9,5 +10,8 @@ import firebase from 'firebase';
     storageBucket: "vue-commerce-700d8.appspot.com",
     messagingSenderId: "921069063606"
   };
- export const fb = firebase.initializeApp(config);
+ const fb = firebase.initializeApp(config);
+ const db = firebase.firestore();
+
+ export {fb, db}
   
