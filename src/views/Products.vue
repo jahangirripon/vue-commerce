@@ -5,8 +5,11 @@
           <hr>
           <div class="intro h-100">
             <div class="row h-100">
-              <div class="col-md-6 justify-content-center align-items-center">                
-                <h3>All products</h3>
+              <div class="col-md-12 justify-content-center align-items-center">                
+                <h3 class="d-inline-block">All products</h3>
+                <button class="btn btn-xs btn-success float-right" @click="addNew">Add Product</button>
+                <hr>
+
                 <table class="table table-bordered table-striped">
 
                   <thead>
@@ -19,12 +22,12 @@
 
                   <tbody>
                     <tr v-for="product in products">
-                      <td>{{ product.data().name }}</td>
-                      <td>{{ product.data().price }}</td>
+                      <td>{{ product.name }}</td>
+                      <td>{{ product.price }}</td>
                       <td>
                         <button class="btn btn-xs btn-success" @click="editProduct(product)">Edit</button>
                         &nbsp;&nbsp;&nbsp;
-                        <button class="btn btn-xs btn-danger" @click="deleteProduct(product.id)">Delete</button>
+                        <button class="btn btn-xs btn-danger" @click="deleteProduct(product)">Delete</button>
                       </td>
                     </tr>
                   </tbody>
@@ -32,29 +35,14 @@
                 </table>
 
               </div>
-              <div class="col-md-6">
-                
-                <h5 class="text-center">Add Product</h5>
-                <div class="form-group">
-                    <label for="exampleInputEmail1">Product name</label>
-                    <input type="name" v-model="product.name" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter name">
-                </div>
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Product price</label>
-                    <input type="price" @keyup.enter="saveData" v-model="product.price" class="form-control" id="exampleInputPassword1" placeholder="Enter price">
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-success" type="submit" @click="saveData">Save product</button>
-                </div>
-
-              </div>
             </div>
           </div>
       </div>
 
       <!-- Update Modal -->
-            <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" role="document">
+
+      <div class="modal fade" id="product" tabindex="-1" role="dialog">
+              <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLongTitle">Update Product</h5>
@@ -62,35 +50,68 @@
                       <span aria-hidden="true">&times;</span>
                     </button>
                   </div>
-                  <div class="modal-body">
+                  <div class="modal-body form-horizontal">
                     
+                    <div class="row">
+                    <div class="col-sm-8">
                       <div class="form-group">
-                    <label for="">Product name</label>
-                    <input type="name" v-model="product.name" class="form-control" id="" aria-describedby="emailHelp" placeholder="Enter name">
-                      </div>
-                      <div class="form-group">
-                          <label for="">Product price</label>
-                          <input type="price" @keyup.enter="saveData" v-model="product.price" class="form-control" id="" placeholder="Enter price">
+                        <label for="">Product name</label>
+                        <input type="name" v-model="product.name" class="form-control" id="" placeholder="Enter name">
                       </div>
 
+                      <div class="form-group">
+                        <label for="">Product description</label>
+                        <vue-editor v-model="product.description"></vue-editor>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                      <div class="form-group">
+                        <label for="">Product price</label>
+                        <input type="name" v-model="product.price" class="form-control" id="" placeholder="Enter price">
+                      </div>
+
+                      <div class="form-group">
+                        <label for="">Product tags</label>
+                        <input type="price" v-model="product.tags" class="form-control" id="" placeholder="Enter tags">
+                      </div>
+
+                      <div class="form-group">
+                        <label for="">Product images</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                          <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                        </div>
+                      </div>
+
+                    </div>
+                    </div>
+
+
+
                   </div>
+
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" @click="updateProduct()" class="btn btn-primary">Save changes</button>
+                    <button type="button" @click="addProduct()" class="btn btn-primary" v-if="modal == 'new' ">Save changes</button>
+                    <button type="button" @click="updateProduct(product)" class="btn btn-primary" v-if="modal == 'edit' ">Update changes</button>
                   </div>
                 </div>
               </div>
             </div>
 
-
   </div>
 </template>
 
 <script>
+import { VueEditor } from "vue2-editor";
 import { fb, db } from '../firebase';
 
 export default {
   name: 'Products',
+  components: {
+    VueEditor
+  },
   props: {
     msg: String
   }, 
@@ -99,88 +120,98 @@ export default {
     return {
       // products: {}, // object initialization
       products: [], // array initialization
+
       product: 
       {
         name: null,
-        price: null
+        description: null,
+        tag: null,
+        price: null,
+        image: null
       },
-      activeItem: null
+      activeItem: null,
+      modal: null
     }
   },
+
+  firestore() {
+    return {
+      products: db.collection("products"),
+    }
+  },
+
   methods: {
+
+    addNew()
+    {
+      this.modal = 'new';
+      $('#product').modal('show');
+    },
+
+    watcher()
+    {
+
+    },
 
     editProduct(product)
     {
-      $('#updateModal').modal('show');
-      this.product = product.data();
-      this.activeItem = product.id;
+      this.modal = 'edit';
+      this.product = product;
+      $('#product').modal('show');
     },
 
     updateProduct()
     {
-      db.collection('products').doc(this.activeItem).update(this.product)
-        .then(() => {
-          $('#updateModal').modal('hide');
-          this.readData();
-          console.log("Data updated successfully!");         
-        })
-        .catch((error) => {
-          console.error("Error updating document:", error);
-          
-        });
+      this.$firestore.products.doc(this.product.id).update(this.product);
+      $('#product').modal('hide');
+      Toast.fire({
+            type: 'success',
+            title: 'Data updated successfully'
+          })
     },
 
     deleteProduct(doc)
     {
-      if(confirm('Are you sure?')) {
-        db.collection('products').doc(doc).delete()
-        .then(() => {
-          console.log("Data deleted successfully!");   
-          this.readData();      
-        })
-        .catch((error) => {
-          console.error("Error removing document:", error);
-          
-        });
-      }
-      else
-      {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+      }).then((result) => {
+        if (result.value) {
 
-      }
+          this.$firestore.products.doc(doc['.key']).delete();
+
+          Toast.fire({
+            type: 'success',
+            title: 'Data Deleted successfully'
+          })
+        }
+      });
     },
+
     readData()
     {
-      this.reset();
-      db.collection('products').get()
-      .then((querySnapshot) =>  {
-        querySnapshot.forEach((doc) => {
-          //console.log(doc.id, " => ", doc.data());
-          //this.products.push(doc.data());
-          this.products.push(doc);
-        });
-      });
+
     },
-    saveData() 
+
+    addProduct() 
     {
-      // Add a new document in collection "products"
-      db.collection("products").add(this.product)
-      .then(() => {
-          console.log("Document successfully saved!");
-          this.readData();
-      })
-      .catch(function(error) {
-          console.error("Error saving document: ", error);
-      });
+      this.$firestore.products.add(this.product);
+      $('#product').modal('hide');
     },
 
     reset()
     {
-      Object.assign(this.$data, this.$options.data.apply(this));
+
     }
   },
 
   created() {
-    this.readData();
+
   }
 }
 </script>
